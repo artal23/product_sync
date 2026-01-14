@@ -149,7 +149,7 @@ make --version
 ### Opción 1: Instalación Rápida con Make (Recomendada)
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/tu-usuario/odoo-product-sync.git
+git clone git@github.com:artal23/product_sync.git
 cd odoo-product-sync
 
 # 2. Setup completo automatizado
@@ -164,7 +164,7 @@ make setup
 ### Opción 2: Instalación Manual
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/tu-usuario/odoo-product-sync.git
+git clone git@github.com:artal23/product_sync.git
 cd odoo-product-sync
 
 # 2. Construir imágenes Docker
@@ -210,7 +210,7 @@ http://localhost:8069
 # 3. Database Name: odoo_sync_test
 # 4. Email: admin@example.com
 # 5. Password: admin
-# 6. Language: English
+# 6. Language: Spanish(PE)
 # 7. Country: Perú (o tu país)
 # 8. Click "Create Database"
 ```
@@ -793,20 +793,12 @@ is_automatic: Boolean         # Automático vs manual
 ## 👥 Equipo y Soporte
 
 ### Autor
-**Candidato Backend Developer**  
+**Arturo Jara**  
 Especialista en Odoo, Python, Integraciones
 
 ### Contacto
-- GitHub: [@tu-usuario](https://github.com/tu-usuario)
-- Email: tu-email@example.com
-
-### Contribuciones
-Las contribuciones son bienvenidas. Por favor:
-1. Fork el proyecto
-2. Crear feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit cambios (`git commit -m 'Add AmazingFeature'`)
-4. Push al branch (`git push origin feature/AmazingFeature`)
-5. Abrir Pull Request
+- GitHub: [@tu-usuario](https://github.com/artal23)
+- Email: artal23jara@gmail.com
 
 ---
 
@@ -815,61 +807,6 @@ Las contribuciones son bienvenidas. Por favor:
 Este proyecto está bajo la Licencia LGPL-3. Ver archivo `LICENSE` para más detalles.
 
 ---
-
-## 🎯 Roadmap
-
-### Version 1.1 (Próximamente)
-- [ ] Webhooks para sincronización en tiempo real
-- [ ] Sincronización de imágenes de productos
-- [ ] Dashboard de estadísticas avanzadas
-- [ ] Export/Import de configuraciones
-- [ ] Multi-tenant support
-
-### Version 2.0 (Futuro)
-- [ ] Sincronización de múltiples entidades (partners, órdenes)
-- [ ] Machine Learning para detección de anomalías
-- [ ] GraphQL API
-- [ ] Autenticación OAuth2
-- [ ] Métricas con Prometheus/Grafana
-
----
-
-## 📖 Referencias
-
-- [Odoo Documentation](https://www.odoo.com/documentation/17.0/)
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
-- [Docker Compose Documentation](https://docs.docker.com/compose/)
-- [Python Requests Library](https://requests.readthedocs.io/)
-- [Pytest Documentation](https://docs.pytest.org/)
-
----
-
-## ✅ Checklist de Implementación
-
-### Para Evaluadores
-
-- [x] Módulo Odoo con ORM correctamente implementado
-- [x] Operaciones CRUD funcionando
-- [x] Idempotencia garantizada
-- [x] Reintentos con backoff exponencial
-- [x] Rate limiting implementado
-- [x] Logs estructurados
-- [x] API externa simulada (Mock API)
-- [x] Validaciones y normalización de datos
-- [x] Testing automatizado (unitario + integración)
-- [x] Manejo de errores robusto
-- [x] Docker Compose configurado
-- [x] Makefile con comandos simples
-- [x] README completo
-- [x] Documentación técnica clara
-- [x] Reproducibilidad garantizada
-
----
-
-**¿Preguntas o problemas?** Abrir un issue en GitHub o contactar al equipo de desarrollo.
-
----
-
 <div align="center">
   <sub>Built with ❤️ using Odoo 17, Python, FastAPI and Docker</sub>
 </div>
