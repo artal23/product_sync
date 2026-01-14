@@ -354,17 +354,7 @@ class ProductSyncService(models.AbstractModel):
             raise
 
     def _send_error_notification(self, result):
-        """
-        Envía notificación de errores al administrador
-        
-        Args:
-            result (dict): Resultado de la sincronización
-        """
-        # Implementar según necesidades:
-        # - Email al administrador
-        # - Notification en Odoo
-        # - Log en Sentry/otro sistema
-        
+       
         _logger.warning(f"Sync errors detected: {result}")
         
         # TODO: Implementar notificación real

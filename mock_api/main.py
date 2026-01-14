@@ -176,7 +176,7 @@ PRODUCTS_DB = [
     {
         "id": 999,
         "name": "Producto Error",
-        # ❌ sku ausente → provocará ValueError en Odoo
+        # ❌ sku ausente 
         "description": "Producto sin SKU",
         "list_price": 1500,
         "standard_price": 1200,
@@ -189,7 +189,7 @@ PRODUCTS_DB = [
     {
         "id": 888,
         "name": "Producto Error 2",
-        # ❌ sku ausente → provocará ValueError en Odoo
+        # ❌ sku ausente 
         "description": "Producto sin SKU 2",
         "list_price": 1600,
         "standard_price": 1300,
@@ -201,7 +201,6 @@ PRODUCTS_DB = [
     }
 ]
 
-# Contador para nuevos IDs
 next_id = len(PRODUCTS_DB) + 1
 
 @app.get("/")

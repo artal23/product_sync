@@ -16,7 +16,6 @@ DB_NAME = odoo_sync_test
 ODOO_PORT = 8069
 API_PORT = 8000
 
-# Colores para output
 GREEN = \033[0;32m
 YELLOW = \033[0;33m
 RED = \033[0;31m
@@ -26,7 +25,6 @@ NC = \033[0m # No Color
 # COMANDOS PRINCIPALES
 # ============================================================================
 
-## help: Muestra este mensaje de ayuda
 help:
 	@echo "$(GREEN)═══════════════════════════════════════════════════════════════$(NC)"
 	@echo "$(GREEN)  Odoo Product Sync - Makefile Commands$(NC)"
@@ -76,7 +74,6 @@ help:
 # SETUP E INSTALACIÓN INICIAL
 # ============================================================================
 
-## setup: Configuración inicial completa del proyecto
 setup:
 	@echo "$(GREEN)🚀 Configurando entorno inicial...$(NC)"
 	@make build
@@ -91,31 +88,26 @@ setup:
 	@echo "2. Instalar módulo: make install-module"
 	@echo "3. Ejecutar sincronización: make sync"
 
-## build: Construir imágenes Docker
 build:
 	@echo "$(GREEN)🔨 Construyendo imágenes Docker...$(NC)"
 	$(DOCKER_COMPOSE) build
 
-## up: Levantar servicios
 up:
 	@echo "$(GREEN)🚀 Levantando servicios...$(NC)"
 	$(DOCKER_COMPOSE) up -d
 	@echo "$(GREEN)✅ Servicios levantados$(NC)"
 	@make status
 
-## down: Detener servicios
 down:
 	@echo "$(YELLOW)⏹️  Deteniendo servicios...$(NC)"
 	$(DOCKER_COMPOSE) down
 	@echo "$(GREEN)✅ Servicios detenidos$(NC)"
 
-## restart: Reiniciar servicios
 restart:
 	@echo "$(YELLOW)🔄 Reiniciando servicios...$(NC)"
 	@make down
 	@make up
 
-## clean: Limpiar contenedores y volúmenes
 clean:
 	@echo "$(RED)🧹 Limpiando contenedores y volúmenes...$(NC)"
 	@echo "$(RED)⚠️  ADVERTENCIA: Esto eliminará todos los datos!$(NC)"
@@ -133,24 +125,19 @@ clean:
 # MONITOREO Y LOGS
 # ============================================================================
 
-## logs: Ver logs de todos los servicios
 logs:
 	$(DOCKER_COMPOSE) logs -f
 
-## logs-odoo: Ver logs solo de Odoo
 logs-odoo:
 	$(DOCKER_COMPOSE) logs -f $(ODOO_CONTAINER)
 
-## logs-api: Ver logs solo de Mock API
 logs-api:
 	$(DOCKER_COMPOSE) logs -f $(API_CONTAINER)
 
-## status: Ver estado de contenedores
 status:
 	@echo "$(GREEN)📊 Estado de los servicios:$(NC)"
 	@$(DOCKER_COMPOSE) ps
 
-## health: Verificar salud de los servicios
 health:
 	@echo "$(GREEN)🏥 Verificando salud de los servicios...$(NC)"
 	@echo ""
@@ -170,36 +157,30 @@ health:
 		echo "  $(RED)❌ Odoo: FAIL$(NC)"
 	@echo ""
 
-## check: Alias de health
 check: health
 
 # ============================================================================
 # DESARROLLO
 # ============================================================================
 
-## shell-odoo: Entrar al shell de Odoo
 shell-odoo:
 	@echo "$(GREEN)🐚 Entrando al shell de Odoo...$(NC)"
 	docker exec -it $(ODOO_CONTAINER) odoo shell -d $(DB_NAME)
 
-## shell-postgres: Entrar al shell de PostgreSQL
 shell-postgres:
 	@echo "$(GREEN)🐚 Entrando al shell de PostgreSQL...$(NC)"
 	docker exec -it $(POSTGRES_CONTAINER) psql -U odoo -d $(DB_NAME)
 
-## shell-api: Entrar al shell del contenedor Mock API
 shell-api:
 	@echo "$(GREEN)🐚 Entrando al shell de Mock API...$(NC)"
 	docker exec -it $(API_CONTAINER) /bin/bash
 
-## install-module: Instalar módulo product_sync
 install-module:
 	@echo "$(GREEN)📦 Instalando módulo product_sync...$(NC)"
 	docker exec $(ODOO_CONTAINER) odoo -d $(DB_NAME) -i product_sync --stop-after-init
 	@echo "$(GREEN)✅ Módulo instalado$(NC)"
 	@make restart
 
-## update-module: Actualizar módulo product_sync
 update-module:
 	@echo "$(GREEN)🔄 Actualizando módulo product_sync...$(NC)"
 	docker exec $(ODOO_CONTAINER) odoo -d $(DB_NAME) -u product_sync --stop-after-init
@@ -210,23 +191,19 @@ update-module:
 # TESTING
 # ============================================================================
 
-## test: Ejecutar todas las pruebas
 test:
 	@echo "$(GREEN)🧪 Ejecutando todas las pruebas...$(NC)"
 	@make test-unit
 	@make test-integration
 
-## test-unit: Ejecutar pruebas unitarias
 test-unit:
 	@echo "$(GREEN)🧪 Ejecutando pruebas unitarias...$(NC)"
 	docker exec $(ODOO_CONTAINER) pytest /mnt/extra-addons/product_sync/tests/test_unit.py -v
 
-## test-integration: Ejecutar pruebas de integración
 test-integration:
 	@echo "$(GREEN)🧪 Ejecutando pruebas de integración...$(NC)"
 	docker exec $(ODOO_CONTAINER) pytest /mnt/extra-addons/product_sync/tests/test_integration.py -v
 
-## test-sync: Probar sincronización manual desde shell
 test-sync:
 	@echo "$(GREEN)🔄 Probando sincronización...$(NC)"
 	@echo "env['product.sync.service'].sync_products(limit=5)" | \
@@ -236,26 +213,22 @@ test-sync:
 # DATOS Y SINCRONIZACIÓN
 # ============================================================================
 
-## demo: Cargar datos de demostración
 demo:
 	@echo "$(GREEN)📊 Cargando datos de demostración...$(NC)"
 	@curl -s http://localhost:$(API_PORT)/products | jq '.items[] | {id, name, sku, list_price}'
 	@echo ""
 	@echo "$(GREEN)✅ Datos disponibles en Mock API$(NC)"
 
-## sync: Ejecutar sincronización completa
 sync:
 	@echo "$(GREEN)🔄 Ejecutando sincronización completa...$(NC)"
 	@echo "result = env['product.sync.service'].sync_products(); print(result)" | \
 		docker exec -i $(ODOO_CONTAINER) odoo shell -d $(DB_NAME)
 
-## sync-dry-run: Simular sincronización sin escribir en BD
 sync-dry-run:
 	@echo "$(YELLOW)🔄 Simulando sincronización (dry run)...$(NC)"
 	@echo "result = env['product.sync.service'].sync_products(dry_run=True, limit=5); print(result)" | \
 		docker exec -i $(ODOO_CONTAINER) odoo shell -d $(DB_NAME)
 
-## reset-data: Limpiar datos de sincronización
 reset-data:
 	@echo "$(RED)🧹 Limpiando datos de sincronización...$(NC)"
 	@echo "$(RED)⚠️  Esto eliminará productos sincronizados y logs$(NC)"
@@ -271,7 +244,6 @@ reset-data:
 # UTILIDADES
 # ============================================================================
 
-## api-test: Probar endpoints de Mock API
 api-test:
 	@echo "$(GREEN)🧪 Probando Mock API...$(NC)"
 	@echo ""
@@ -282,14 +254,12 @@ api-test:
 	@curl -s "http://localhost:$(API_PORT)/products?limit=3" | jq '.items[0:3] | .[] | {id, name, sku, list_price}'
 	@echo ""
 
-## backup-db: Backup de la base de datos
 backup-db:
 	@echo "$(GREEN)💾 Creando backup de base de datos...$(NC)"
 	@mkdir -p ./backups
 	docker exec $(POSTGRES_CONTAINER) pg_dump -U odoo $(DB_NAME) > ./backups/$(DB_NAME)_$(shell date +%Y%m%d_%H%M%S).sql
 	@echo "$(GREEN)✅ Backup creado en ./backups/$(NC)"
 
-## restore-db: Restaurar base de datos desde backup
 restore-db:
 	@echo "$(YELLOW)📥 Restaurar base de datos...$(NC)"
 	@ls -1 ./backups/*.sql 2>/dev/null || (echo "$(RED)No hay backups disponibles$(NC)" && exit 1)
@@ -299,14 +269,10 @@ restore-db:
 	docker exec -i $(POSTGRES_CONTAINER) psql -U odoo -d $(DB_NAME) < ./backups/$$file
 	@echo "$(GREEN)✅ Base de datos restaurada$(NC)"
 
-## ps: Alias de status
 ps: status
 
-## stop: Alias de down
 stop: down
 
-## start: Alias de up
 start: up
 
-# Default target
 .DEFAULT_GOAL := help

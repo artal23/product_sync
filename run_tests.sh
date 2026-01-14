@@ -3,13 +3,12 @@
 echo "🧪 ===== PRODUCT SYNC - TEST SUITE ====="
 echo ""
 
-# Colores
+
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m' 
 
-# Variables
 DB_NAME="sync"
 ODOO_CONTAINER="odoo17_app"
 
@@ -30,7 +29,7 @@ docker exec $ODOO_CONTAINER python3 -m pytest \
 
 API_CLIENT_EXIT=$?
 
-# Test de Rate Limiter
+
 echo ""
 echo "${GREEN}▶ Testing Rate Limiter...${NC}"
 docker exec $ODOO_CONTAINER python3 -m pytest \
@@ -39,7 +38,7 @@ docker exec $ODOO_CONTAINER python3 -m pytest \
 
 RATE_LIMITER_EXIT=$?
 
-# 2. Tests de integración (con Odoo)
+
 echo ""
 echo "${YELLOW}===============================================${NC}"
 echo "${YELLOW}  2️⃣  TESTS DE INTEGRACIÓN (con Odoo)${NC}"
@@ -55,7 +54,6 @@ docker exec $ODOO_CONTAINER odoo -d $DB_NAME \
 
 INTEGRATION_EXIT=$?
 
-# 3. Test de sincronización real (end-to-end)
 echo ""
 echo "${YELLOW}===============================================${NC}"
 echo "${YELLOW}  3️⃣  TEST END-TO-END (API Mock)${NC}"
@@ -64,7 +62,6 @@ echo "${YELLOW}===============================================${NC}"
 echo ""
 echo "${GREEN}▶ Testing full synchronization flow...${NC}"
 
-# Verificar que Mock API está corriendo
 echo "  Checking Mock API..."
 if curl -s http://localhost:8000/health > /dev/null 2>&1; then
     echo "  ${GREEN}✓${NC} Mock API is running"
@@ -75,7 +72,6 @@ else
     sleep 3
 fi
 
-# Ejecutar sincronización de prueba
 echo ""
 echo "  Running sync test..."
 docker exec $ODOO_CONTAINER odoo shell -d $DB_NAME <<EOF
@@ -115,7 +111,6 @@ EOF
 
 E2E_EXIT=$?
 
-# 4. Test de idempotencia
 echo ""
 echo "${YELLOW}===============================================${NC}"
 echo "${YELLOW}  4️⃣  TEST DE IDEMPOTENCIA${NC}"
@@ -178,7 +173,6 @@ TOTAL_TESTS=5
 PASSED=0
 FAILED=0
 
-# Función para mostrar resultado
 print_result() {
     TEST_NAME=$1
     EXIT_CODE=$2

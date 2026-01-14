@@ -39,7 +39,6 @@ class RateLimiter:
         self.rate = rate
         self.per_seconds = per_seconds
         
-        # Tokens disponibles inicialmente
         self.tokens = float(rate)
         self.max_tokens = float(rate)
         
