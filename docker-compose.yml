@@ -1,0 +1,78 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: odoo17_postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    networks:
+      - odoo-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  odoo:
+    #image: odoo:17.0
+    build:
+      context: .
+      dockerfile: Dockerfile.odoo
+    container_name: odoo17_app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mock-api:
+        condition: service_started
+    ports:
+      - "8069:8069"
+    environment:
+      - HOST=postgres
+      - USER=odoo
+      - PASSWORD=odoo
+    volumes:
+      - ./addons:/mnt/extra-addons
+      - ./config:/etc/odoo
+      - odoo-web-data:/var/lib/odoo
+    networks:
+      - odoo-network
+    restart: unless-stopped
+    # IMPORTANTE: Sin comando personalizado, usar el default de la imagen
+    entrypoint: /entrypoint.sh
+    command: odoo
+
+  mock-api:
+    build:
+      context: ./mock_api
+      dockerfile: Dockerfile
+    container_name: mock_api
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=development
+      - LOG_LEVEL=info
+    volumes:
+      - ./mock_api:/app
+    networks:
+      - odoo-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  odoo-web-data:
+  odoo-db-data:
+
+networks:
+  odoo-network:
+    driver: bridge

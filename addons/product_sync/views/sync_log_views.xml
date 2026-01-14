@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Vista de Lista de Sync Logs -->
+    <record id="view_product_sync_log_tree" model="ir.ui.view">
+        <field name="name">product.sync.log.tree</field>
+        <field name="model">product.sync.log</field>
+        <field name="arch" type="xml">
+            <tree string="Synchronization Logs" 
+                  create="false" 
+                  edit="false"
+                  decoration-success="status == 'success'"
+                  decoration-warning="status == 'warning'"
+                  decoration-danger="status == 'error'">
+                
+                <field name="create_date" string="Date"/>
+                <field name="operation"/>
+                <field name="status"/>
+                <field name="product_id"/>
+                <field name="external_id"/>
+                <field name="external_sku"/>
+                <field name="message"/>
+                <field name="execution_time" string="Time (s)"/>
+                <field name="retry_count"/>
+                <field name="sync_batch_id" optional="hide"/>
+                <field name="is_automatic" optional="hide"/>
+                <field name="user_id" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de Formulario de Sync Log -->
+    <record id="view_product_sync_log_form" model="ir.ui.view">
+        <field name="name">product.sync.log.form</field>
+        <field name="model">product.sync.log</field>
+        <field name="arch" type="xml">
+            <form string="Synchronization Log" create="false" edit="false">
+                <header>
+                    <button name="action_view_product" 
+                            type="object" 
+                            string="View Product"
+                            class="btn-primary"
+                            icon="fa-cube"
+                            invisible="product_id == False"/>
+                    
+                    <button name="action_retry_operation" 
+                            type="object" 
+                            string="Retry"
+                            class="btn-warning"
+                            icon="fa-refresh"
+                            invisible="status != 'error'"/>
+                    
+                    <field name="status" widget="statusbar"/>
+                </header>
+                
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_product" 
+                                type="object" 
+                                class="oe_stat_button" 
+                                icon="fa-cube"
+                                invisible="product_id == False">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">View</span>
+                                <span class="o_stat_text">Product</span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group string="Operation Details">
+                            <field name="operation"/>
+                            <field name="status"/>
+                            <field name="create_date"/>
+                            <field name="execution_time"/>
+                            <field name="retry_count"/>
+                        </group>
+                        
+                        <group string="Product Information">
+                            <field name="product_id"/>
+                            <field name="external_id"/>
+                            <field name="external_sku"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Sync Information">
+                        <group>
+                            <field name="sync_batch_id"/>
+                            <field name="is_automatic"/>
+                            <field name="user_id"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Message" name="message">
+                            <field name="message" nolabel="1" placeholder="Log message..."/>
+                        </page>
+                        
+                        <page string="Error Details" 
+                              name="error_details"
+                              invisible="error_details == False">
+                            <field name="error_details" nolabel="1" widget="text"/>
+                        </page>
+                        
+                        <page string="Request Data" 
+                              name="request_data"
+                              invisible="request_data == False">
+                            <field name="request_data" nolabel="1" widget="text"/>
+                        </page>
+                        
+                        <page string="Response Data" 
+                              name="response_data"
+                              invisible="response_data == False">
+                            <field name="response_data" nolabel="1" widget="text"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de Búsqueda para Sync Logs -->
+    <record id="view_product_sync_log_search" model="ir.ui.view">
+        <field name="name">product.sync.log.search</field>
+        <field name="model">product.sync.log</field>
+        <field name="arch" type="xml">
+            <search string="Sync Logs">
+                <field name="product_id"/>
+                <field name="external_id"/>
+                <field name="external_sku"/>
+                <field name="sync_batch_id"/>
+                <field name="message"/>
+                
+                <filter name="status_success" 
+                        string="Success"
+                        domain="[('status', '=', 'success')]"/>
+                
+                <filter name="status_error" 
+                        string="Errors"
+                        domain="[('status', '=', 'error')]"/>
+                
+                <filter name="status_warning" 
+                        string="Warnings"
+                        domain="[('status', '=', 'warning')]"/>
+                
+                <separator/>
+                
+                <filter name="op_create" 
+                        string="Created"
+                        domain="[('operation', '=', 'create')]"/>
+                
+                <filter name="op_update" 
+                        string="Updated"
+                        domain="[('operation', '=', 'update')]"/>
+                
+                <filter name="op_skip" 
+                        string="Skipped"
+                        domain="[('operation', '=', 'skip')]"/>
+                
+                <filter name="op_error" 
+                        string="Errors"
+                        domain="[('operation', '=', 'error')]"/>
+                
+                <separator/>
+                
+                <filter name="automatic" 
+                        string="Automatic"
+                        domain="[('is_automatic', '=', True)]"/>
+                
+                <filter name="manual" 
+                        string="Manual"
+                        domain="[('is_automatic', '=', False)]"/>
+                
+                <separator/>
+                
+                <filter name="today" 
+                        string="Today"
+                        domain="[('create_date', '&gt;=', context_today().strftime('%Y-%m-%d 00:00:00'))]"/>
+                
+                <filter name="last_7_days" 
+                        string="Last 7 Days"
+                        domain="[('create_date', '&gt;=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d 00:00:00'))]"/>
+                
+                <filter name="last_30_days" 
+                        string="Last 30 Days"
+                        domain="[('create_date', '&gt;=', (context_today() - datetime.timedelta(days=30)).strftime('%Y-%m-%d 00:00:00'))]"/>
+                
+                <separator/>
+                
+                <group expand="0" string="Group By">
+                    <filter name="group_operation" 
+                            string="Operation" 
+                            context="{'group_by': 'operation'}"/>
+                    
+                    <filter name="group_status" 
+                            string="Status" 
+                            context="{'group_by': 'status'}"/>
+                    
+                    <filter name="group_batch" 
+                            string="Batch" 
+                            context="{'group_by': 'sync_batch_id'}"/>
+                    
+                    <filter name="group_date" 
+                            string="Date" 
+                            context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción de ventana para Sync Logs -->
+    <record id="action_product_sync_log" model="ir.actions.act_window">
+        <field name="name">Synchronization Logs</field>
+        <field name="res_model">product.sync.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{
+            'search_default_today': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No synchronization logs yet
+            </p>
+            <p>
+                All product synchronization operations will be logged here for audit and debugging purposes.
+            </p>
+        </field>
+    </record>
+
+    <!-- Acción de ventana para logs con errores -->
+    <record id="action_product_sync_log_errors" model="ir.actions.act_window">
+        <field name="name">Synchronization Errors</field>
+        <field name="res_model">product.sync.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('status', '=', 'error')]</field>
+        <field name="context">{
+            'search_default_status_error': 1,
+        }</field>
+    </record>
+
+</odoo>

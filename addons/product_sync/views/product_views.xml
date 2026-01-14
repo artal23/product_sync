@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista de Lista de Productos con campos de sincronización -->
+    <record id="view_product_template_tree_sync" model="ir.ui.view">
+        <field name="name">product.template.tree.sync</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="decoration-success">sync_status == 'synced'</attribute>
+                <attribute name="decoration-warning">sync_status == 'pending'</attribute>
+                <attribute name="decoration-danger">sync_status == 'error'</attribute>
+                <attribute name="decoration-muted">sync_status == 'manual'</attribute>
+            </xpath>
+            
+            <xpath expr="//field[@name='default_code']" position="after">
+                <field name="external_sku" optional="show"/>
+                <field name="sync_status" optional="show"/>
+                <field name="last_sync_date" optional="hide"/>
+                <field name="is_from_external" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Vista de Formulario de Producto con tab de sincronización -->
+    <record id="view_product_template_form_sync" model="ir.ui.view">
+        <field name="name">product.template.form.sync</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <!-- Agregar botones en el header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_sync_from_external" 
+                        type="object" 
+                        string="Sync from External"
+                        class="btn-primary"
+                        invisible="external_id == False"
+                        icon="fa-refresh"/>
+                
+                <button name="action_mark_manual" 
+                        type="object" 
+                        string="Mark as Manual"
+                        invisible="is_from_external == False"
+                        icon="fa-hand-paper-o"/>
+                
+                <field name="sync_status" widget="statusbar" 
+                       statusbar_visible="pending,synced,error"/>
+            </xpath>
+
+            <!-- Agregar página de sincronización -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Synchronization" name="sync_info">
+                    <group>
+                        <group string="External System Info">
+                            <field name="external_id" readonly="1"/>
+                            <field name="external_sku"/>
+                            <field name="is_from_external"/>
+                        </group>
+                        <group string="Sync Status">
+                            <field name="sync_status"/>
+                            <field name="last_sync_date" readonly="1"/>
+                            <field name="sync_error_message" readonly="1"
+                                   invisible="sync_error_message == False"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Sync Logs">
+                        <field name="sync_log_count" invisible="1"/>
+                        <button name="action_view_sync_logs" 
+                                type="object" 
+                                string="View Sync Logs"
+                                class="oe_stat_button"
+                                icon="fa-history"
+                                invisible="sync_log_count == 0"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Vista de búsqueda con filtros de sincronización -->
+    <record id="view_product_template_search_sync" model="ir.ui.view">
+        <field name="name">product.template.search.sync</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter name="from_external" 
+                        string="From External System"
+                        domain="[('is_from_external', '=', True)]"/>
+                
+                <filter name="sync_synced" 
+                        string="Synced"
+                        domain="[('sync_status', '=', 'synced')]"/>
+                
+                <filter name="sync_pending" 
+                        string="Pending Sync"
+                        domain="[('sync_status', '=', 'pending')]"/>
+                
+                <filter name="sync_error" 
+                        string="Sync Errors"
+                        domain="[('sync_status', '=', 'error')]"/>
+                
+                <filter name="manual_products" 
+                        string="Manual (No Sync)"
+                        domain="[('sync_status', '=', 'manual')]"/>
+                
+                <separator/>
+                
+                <filter name="synced_today" 
+                        string="Synced Today"
+                        domain="[('last_sync_date', '&gt;=', context_today().strftime('%Y-%m-%d 00:00:00'))]"/>
+                
+                <separator/>
+                
+                <group expand="0" string="Group By">
+                    <filter name="group_sync_status" 
+                            string="Sync Status" 
+                            context="{'group_by': 'sync_status'}"/>
+                    
+                    <filter name="group_is_external" 
+                            string="Source" 
+                            context="{'group_by': 'is_from_external'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Acción de ventana para productos sincronizados -->
+    <record id="action_product_synced" model="ir.actions.act_window">
+        <field name="name">Synchronized Products</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('is_from_external', '=', True)]</field>
+        <field name="context">{
+            'search_default_from_external': 1,
+            'search_default_sync_synced': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No synchronized products yet
+            </p>
+            <p>
+                Products synchronized from external systems will appear here.
+                Click on "Sync Products" to start synchronization.
+            </p>
+        </field>
+    </record>
+
+</odoo>

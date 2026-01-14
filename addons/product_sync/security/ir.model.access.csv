@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_product_sync_log_user,product.sync.log.user,model_product_sync_log,base.group_user,1,0,0,0
+access_product_sync_log_manager,product.sync.log.manager,model_product_sync_log,sales_team.group_sale_manager,1,1,1,1
+access_product_sync_log_system,product.sync.log.system,model_product_sync_log,base.group_system,1,1,1,1
+access_product_sync_service_user,product.sync.service.user,model_product_sync_service,base.group_user,1,0,0,0
+access_product_sync_service_manager,product.sync.service.manager,model_product_sync_service,sales_team.group_sale_manager,1,1,1,0
+access_product_sync_service_system,product.sync.service.system,model_product_sync_service,base.group_system,1,1,1,1

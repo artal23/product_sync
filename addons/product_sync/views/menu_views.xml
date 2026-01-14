@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Menú Principal de Product Sync -->
+    <menuitem id="menu_product_sync_root"
+              name="Product Sync"
+              sequence="50"/>
+    
+    <!-- Submenú: Products -->
+    <menuitem id="menu_product_sync_products"
+              name="Products"
+              parent="menu_product_sync_root"
+              sequence="10"/>
+    
+    <menuitem id="menu_product_sync_products_all"
+              name="All Products"
+              parent="menu_product_sync_products"
+              action="product.product_template_action"
+              sequence="10"/>
+    
+    <menuitem id="menu_product_sync_products_synced"
+              name="Synchronized Products"
+              parent="menu_product_sync_products"
+              action="action_product_synced"
+              sequence="20"/>
+    
+    <!-- Submenú: Synchronization -->
+    <menuitem id="menu_product_sync_sync"
+              name="Synchronization"
+              parent="menu_product_sync_root"
+              sequence="20"/>
+    
+    <menuitem id="menu_product_sync_logs"
+              name="Sync Logs"
+              parent="menu_product_sync_sync"
+              action="action_product_sync_log"
+              sequence="10"/>
+    
+    <menuitem id="menu_product_sync_errors"
+              name="Sync Errors"
+              parent="menu_product_sync_sync"
+              action="action_product_sync_log_errors"
+              sequence="20"/>
+    
+    <!-- Submenú: Configuration (simplificado, sin action que no existe) -->
+    <menuitem id="menu_product_sync_config"
+              name="Configuration"
+              parent="menu_product_sync_root"
+              sequence="100"
+              groups="base.group_system"/>
+
+</odoo>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Parámetros de Configuración del Sistema -->
+        
+        <!-- URL base de la API externa -->
+        <record id="config_param_api_base_url" model="ir.config_parameter">
+            <field name="key">product_sync.api_base_url</field>
+            <field name="value">http://mock-api:8000</field>
+        </record>
+        
+        <!-- Timeout de peticiones (segundos) -->
+        <record id="config_param_api_timeout" model="ir.config_parameter">
+            <field name="key">product_sync.api_timeout</field>
+            <field name="value">30</field>
+        </record>
+        
+        <!-- Número máximo de reintentos -->
+        <record id="config_param_api_max_retries" model="ir.config_parameter">
+            <field name="key">product_sync.api_max_retries</field>
+            <field name="value">5</field>
+        </record>
+        
+        <!-- Rate limit (peticiones por segundo) -->
+        <record id="config_param_rate_limit" model="ir.config_parameter">
+            <field name="key">product_sync.rate_limit</field>
+            <field name="value">10</field>
+        </record>
+        
+        <!-- Habilitar sincronización automática -->
+        <record id="config_param_auto_sync_enabled" model="ir.config_parameter">
+            <field name="key">product_sync.auto_sync_enabled</field>
+            <field name="value">True</field>
+        </record>
+        
+        <!-- Intervalo de sincronización automática (minutos) -->
+        <record id="config_param_sync_interval" model="ir.config_parameter">
+            <field name="key">product_sync.sync_interval</field>
+            <field name="value">15</field>
+        </record>
+        
+    </data>
+</odoo>
